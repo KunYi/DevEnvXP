@@ -43,22 +43,31 @@ LOCAL_INC_PATH = $(INC_DIR)
 LOCAL_LIB_PATH = $(LIB_DIR)
 
 # Compiler flags
-CFLAGS = /nologo /c /W3 /Zel /Gz \
-         /D_WIN32_WINNT=0x0501 /DNTDDI_VERSION=0x05010100 \
-         /D_X86_=1 /DWINXP /DWIN32=100 \
-         /DDEPRECATE_DDK_FUNCTIONS=1 \
-         /I$(XP_INC_PATH) \
-         /I$(DDK_XP_INC_PATH) \
-         /I$(WDM_INC_PATH) \
-         /I$(CRT_INC_PATH) \
-         /I$(LOCAL_INC_PATH)
+# -nologo    : without banner output
+# -c         : compile only without linking
+# -W3        : set warning level to 3
+# -Zel       : unknown, but it is default option in DDK
+# -Gz        : __stdcall calling convention
+# -Zp8       : pack structs on 8byte boundary
+# -Gy        : separate functions for linker
+# -cbstring  :
+# -Z7        : enable old-style debug info
+CFLAGS = -nologo -c -W3 -Zel -Gz -Zp8 -Gy -cbstring -Z7 \
+         -D_WIN32_WINNT=0x0501 -DNTDDI_VERSION=0x05010100 \
+         -DSTDCALL -D_X86_=1 -Di386=1 -DWINXP -DWIN32=100 \
+         -DDEPRECATE_DDK_FUNCTIONS=1 \
+         -I$(XP_INC_PATH) \
+         -I$(DDK_XP_INC_PATH) \
+         -I$(WDM_INC_PATH) \
+         -I$(CRT_INC_PATH) \
+         -I$(LOCAL_INC_PATH)
 
 # Linker flags
-LDFLAGS = /nologo /DRIVER /SUBSYSTEM:NATIVE /BASE:0x10000 /INCREMENTAL:NO \
-          /ENTRY:DriverEntry /NODEFAULTLIB /DEBUG:FULL /DEBUGTYPE:CV \
-          /LIBPATH:$(DDK_LIB_PATH)\\wxp\\i386 \
-          /LIBPATH:$(DDK_LIB_PATH)\\crt\\i386 \
-          /LIBPATH:$(LOCAL_LIB_PATH)
+LDFLAGS = -nologo -DRIVER -SUBSYSTEM:NATIVE -BASE:0x10000 -INCREMENTAL:NO \
+          -ENTRY:DriverEntry -NODEFAULTLIB -DEBUG:FULL -DEBUGTYPE:CV \
+          -LIBPATH:$(DDK_LIB_PATH)\\wxp\\i386 \
+          -LIBPATH:$(DDK_LIB_PATH)\\crt\\i386 \
+          -LIBPATH:$(LOCAL_LIB_PATH)
 
 # Libraries to link (adjust based on your driver needs)
 # DDK_LIBS = ntoskrnl.lib hal.lib wdm.lib
@@ -96,13 +105,6 @@ $(TARGET): $(OBJECTS) | $(BUILD_DIR)
 # XP OS image
 OS   = ${HOME}/imgs/winxp_nano.img
 
-# all files into cdrom.iso
-files_cdrom := inf_autorun batch_run sys_main pdb_main
-inf_autorun := autorun.inf=$(CDROM_DIR)/autorun.inf
-batch_run := run.bat=$(CDROM_DIR)/run.bat
-sys_main := main.sys=$(BUILD_DIR)/main.sys
-pdb_main := main.pdb=$(BUILD_DIR)/main.pdb
-
 define qemux86
   qemu-system-i386 \
     -m 2048M \
@@ -119,6 +121,13 @@ define qemux86
     -rtc base=localtime \
     -monitor stdio
 endef
+
+# all files into cdrom.iso
+files_cdrom := inf_autorun batch_run sys_main pdb_main
+inf_autorun := autorun.inf=$(CDROM_DIR)/autorun.inf
+batch_run := run.bat=$(CDROM_DIR)/run.bat
+sys_main := main.sys=$(BUILD_DIR)/main.sys
+pdb_main := main.pdb=$(BUILD_DIR)/main.pdb
 
 run: $(TARGET)
 	rm -rf $(BUILD_DIR)/cdrom
