@@ -12,6 +12,8 @@ This project provides a Makefile-based build system for developing and compiling
 ├── cdrom            # Autorun script files for CD-ROM ISO
 ├── inc              # Header files
 ├── lib              # Additional .lib libraries
+├── LICENSE          # License file
+├── mak              # For Makefile submodule
 ├── Makefile         # Build system using MSVC under Wine
 ├── objs             # Intermediate object files
 ├── README.md        # ReadME Document
