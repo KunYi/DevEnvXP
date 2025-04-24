@@ -69,7 +69,9 @@ EXTRA_LIBS = $(wildcard $(LIB_DIR)/*.lib)
 LIBS = $(DDK_LIBS) $(EXTRA_LIBS)
 
 # Source files
-SOURCES = $(SRC_DIR)/main.c $(SRC_DIR)/utils.c
+# Automatically find all .c source files in SRC_DIR
+SOURCES := $(wildcard $(SRC_DIR)/*.c)
+# Generate corresponding .obj file paths in OBJ_DIR
 OBJECTS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.obj,$(SOURCES))
 
 # Target driver name
