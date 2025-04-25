@@ -100,5 +100,6 @@ define qemux86
     -nic user,model=e1000 \
     -usb \
     -rtc base=localtime \
-    -monitor stdio
+    -monitor stdio \
+    -snapshot
 endef
